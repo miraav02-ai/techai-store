@@ -35,7 +35,7 @@ export function Rating({ value, reviews }: { value: number; reviews?: number }) 
 
 export function ProductCard({ product, view = "grid" }: { product: Product; view?: "grid" | "list" }) {
   const { addToCart, toggleCompare, compare } = useStore();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const inCompare = compare.some((p) => p.id === product.id);
@@ -65,6 +65,12 @@ export function ProductCard({ product, view = "grid" }: { product: Product; view
         description: "Please sign in to add items to your cart.",
       });
       void navigate({ to: "/login" });
+      return;
+    }
+    if (isAdmin) {
+      toast.info("Admin Mode", {
+        description: "Pembelian dinonaktifkan untuk akun Administrator.",
+      });
       return;
     }
     addToCart(product);

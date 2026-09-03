@@ -22,8 +22,8 @@ export function AdminCustomerGuard({ children, routeName = "Area Belanja Custome
   useEffect(() => {
     if (!loading && isAdmin) {
       const timer = setTimeout(() => {
-        void navigate({ to: "/admin" });
-      }, 1200);
+        void navigate({ to: "/" });
+      }, 1500);
       return () => clearTimeout(timer);
     }
     return undefined;
@@ -45,15 +45,20 @@ export function AdminCustomerGuard({ children, routeName = "Area Belanja Custome
           </Badge>
           <h1 className="text-2xl font-bold text-foreground">Akses Dibatasi untuk Admin</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Halaman <strong>{routeName}</strong> khusus untuk area pengguna (customer). Akun Administrator diarahkan ke <strong>Dashboard Admin</strong>.
+            Halaman <strong>{routeName}</strong> khusus untuk transaksi customer. Administrator diarahkan ke <strong>Halaman Utama Admin</strong>.
           </p>
           <p className="mt-2 text-xs text-muted-foreground/80">
-            Mengalihkan Anda ke Dashboard Admin...
+            Mengalihkan Anda ke Halaman Utama Admin...
           </p>
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Button asChild variant="outline" className="rounded-xl">
+              <Link to="/">
+                <Home className="mr-1.5 size-4" /> Beranda Admin
+              </Link>
+            </Button>
             <Button asChild className="rounded-xl">
               <Link to="/admin">
-                <LayoutDashboard className="mr-1.5 size-4" /> Buka Dashboard Admin
+                <LayoutDashboard className="mr-1.5 size-4" /> Dashboard Admin
               </Link>
             </Button>
           </div>

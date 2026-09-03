@@ -88,6 +88,22 @@ export function Header() {
               <SheetTitle className="px-4 pt-4">Admin Navigation</SheetTitle>
               <nav className="flex flex-col gap-2 p-4">
                 <Link
+                  to="/"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted"
+                >
+                  <Home className="size-4" /> Beranda
+                </Link>
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setAiOpen(true);
+                  }}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-secondary hover:bg-muted"
+                >
+                  <Sparkles className="size-4" /> AI Assistant
+                </button>
+                <Link
                   to="/admin"
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
@@ -110,7 +126,7 @@ export function Header() {
 
           {/* Logo with Admin Badge */}
           <div className="flex items-center gap-3">
-            <Link to="/admin" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <span className="grid size-9 place-items-center rounded-xl gradient-ai text-secondary-foreground">
                 <Laptop className="size-5" />
               </span>
@@ -123,8 +139,20 @@ export function Header() {
             </Badge>
           </div>
 
-          {/* Desktop Admin Main Area */}
+          {/* Desktop Admin 3 Areas */}
           <nav className="hidden md:flex items-center gap-2">
+            <Button asChild variant="ghost" className="rounded-xl font-medium">
+              <Link to="/">
+                <Home className="mr-1.5 size-4" /> Beranda
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setAiOpen(true)}
+              className="rounded-xl font-medium border-secondary/40 text-secondary hover:bg-secondary/10"
+            >
+              <Sparkles className="mr-1.5 size-4" /> AI Assistant
+            </Button>
             <Button asChild variant="default" className="rounded-xl font-medium">
               <Link to="/admin">
                 <LayoutDashboard className="mr-1.5 size-4" /> Dashboard Admin
@@ -134,6 +162,14 @@ export function Header() {
 
           {/* Right Action: Admin Profile & Logout */}
           <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setAiOpen(true)}
+              size="sm"
+              className="animate-pulse-ring rounded-xl md:hidden"
+            >
+              <Sparkles className="size-4" />
+            </Button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-2 rounded-xl border border-border">
@@ -158,6 +194,19 @@ export function Header() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild className="cursor-pointer gap-2 rounded-lg">
+                  <Link to="/" className="flex w-full items-center gap-2">
+                    <Home className="size-4" />
+                    <span>Beranda</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setAiOpen(true)}
+                  className="cursor-pointer gap-2 rounded-lg text-secondary"
+                >
+                  <Sparkles className="size-4" />
+                  <span>AI Assistant</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer gap-2 rounded-lg">
                   <Link to="/admin" className="flex w-full items-center gap-2">
                     <LayoutDashboard className="size-4 text-secondary" />

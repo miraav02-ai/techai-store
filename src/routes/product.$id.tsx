@@ -73,6 +73,12 @@ function ProductDetail() {
       void navigate({ to: "/login" });
       return;
     }
+    if (isAdmin) {
+      toast.info("Admin Mode", {
+        description: "Pembelian dinonaktifkan untuk akun Administrator.",
+      });
+      return;
+    }
     addToCart(product, qty);
   };
 
@@ -82,6 +88,12 @@ function ProductDetail() {
         description: "Please sign in to proceed to checkout.",
       });
       void navigate({ to: "/login" });
+      return;
+    }
+    if (isAdmin) {
+      toast.info("Admin Mode", {
+        description: "Checkout dinonaktifkan untuk akun Administrator.",
+      });
       return;
     }
     addToCart(product, qty);
@@ -111,8 +123,7 @@ function ProductDetail() {
   };
 
   return (
-    <AdminCustomerGuard routeName={`Detail Produk (${product.name})`}>
-      <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Breadcrumbs */}
       <nav className="mb-5 text-sm text-muted-foreground">
         <Link to="/" className="hover:text-foreground">
@@ -502,6 +513,5 @@ function ProductDetail() {
           </section>
         )}
       </div>
-    </AdminCustomerGuard>
-  );
-}
+    );
+  }

@@ -95,7 +95,7 @@ function Login() {
         }
 
         if (isUserAdmin) {
-          void navigate({ to: "/admin" });
+          void navigate({ to: "/" });
         } else {
           void navigate({ to: "/shop" });
         }

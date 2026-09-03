@@ -197,11 +197,6 @@ export function AIAssistant() {
     }
   };
 
-  // Hide AI Shopping Assistant completely for Admin
-  if (isAdmin) {
-    return null;
-  }
-
   return (
     <>
       <Button
