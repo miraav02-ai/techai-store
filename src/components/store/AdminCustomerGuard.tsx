@@ -45,28 +45,16 @@ export function AdminCustomerGuard({ children, routeName = "Area Belanja Custome
           </Badge>
           <h1 className="text-2xl font-bold text-foreground">Akses Dibatasi untuk Admin</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Halaman <strong>{routeName}</strong> khusus untuk pengguna (customer). Administrator hanya memiliki akses ke <strong>Beranda</strong>, <strong>AI Assistant</strong>, dan <strong>Dashboard Admin</strong>.
+            Halaman <strong>{routeName}</strong> khusus untuk area pengguna (customer). Akun Administrator diarahkan ke <strong>Dashboard Admin</strong>.
           </p>
           <p className="mt-2 text-xs text-muted-foreground/80">
             Mengalihkan Anda ke Dashboard Admin...
           </p>
-          <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
+          <div className="mt-6 flex justify-center">
             <Button asChild className="rounded-xl">
               <Link to="/admin">
-                <LayoutDashboard className="mr-1.5 size-4" /> Dashboard Admin
+                <LayoutDashboard className="mr-1.5 size-4" /> Buka Dashboard Admin
               </Link>
-            </Button>
-            <Button asChild variant="outline" className="rounded-xl">
-              <Link to="/">
-                <Home className="mr-1.5 size-4" /> Beranda
-              </Link>
-            </Button>
-            <Button
-              variant="secondary"
-              className="rounded-xl"
-              onClick={() => setAiOpen(true)}
-            >
-              <Sparkles className="mr-1.5 size-4" /> AI Assistant
             </Button>
           </div>
         </div>

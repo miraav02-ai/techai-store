@@ -169,16 +169,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAdmin = useMemo(() => {
     if (!user) return false;
+    // 1. Primary Source of Truth: Database profile role
+    if (profile?.role === "admin") {
+      return true;
+    }
+    // 2. Configured fallback for official admin account
     const email = user.email?.toLowerCase() || "";
-    // Admin validation:
-    // 1. Matches official Admin Email (admin@techai.store or any admin@ domain)
-    const isEmailMatch = email === ADMIN_EMAIL.toLowerCase() || email.startsWith("admin@");
-    // 2. Or matches profile role === 'admin'
-    const isRoleAdmin = profile?.role === "admin";
-    // 3. Or matches official Admin User ID
-    const isIdMatch = user.id === ADMIN_USER_ID;
+    const isOfficialAdmin =
+      email === ADMIN_EMAIL.toLowerCase() || user.id === ADMIN_USER_ID;
 
-    return isEmailMatch || isRoleAdmin || isIdMatch;
+    return isOfficialAdmin;
   }, [user, profile]);
 
   const signOut = useCallback(async () => {

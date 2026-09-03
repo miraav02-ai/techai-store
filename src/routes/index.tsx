@@ -16,10 +16,12 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/store/ProductCard";
+import { AdminCustomerGuard } from "@/components/store/AdminCustomerGuard";
 import { useAuth } from "@/lib/auth";
 import { useStore } from "@/lib/store";
 
@@ -62,205 +64,112 @@ function Home() {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 4);
 
-  // ==========================================
-  // 1. ADMIN EXCLUSIVE HOMEPAGE
-  // ==========================================
-  if (isAdmin) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 py-12 space-y-12">
-        {/* Admin Welcome Hero */}
-        <section className="gradient-hero rounded-3xl p-8 sm:p-12 border border-border">
-          <div className="max-w-3xl space-y-6">
-            <Badge className="rounded-full bg-secondary/15 text-secondary border border-secondary/30">
-              <ShieldCheck className="mr-1.5 size-4" /> Mode Administrator Aktif
-            </Badge>
-            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
-              Pusat Kontrol & Asisten AI TechAI Store
-            </h1>
-            <p className="text-base text-foreground/80 leading-relaxed">
-              Selamat datang, <strong>{user?.email}</strong>. Sebagai Administrator, Anda memiliki akses penuh ke Dashboard Manajemen dan True AI Shopping Agent untuk mengelola inventaris dan memantau pesanan customer secara real-time.
-            </p>
-            <div className="flex flex-wrap gap-4 pt-2">
-              <Button asChild size="lg" className="rounded-xl shadow-lg">
-                <Link to="/admin">
-                  <LayoutDashboard className="mr-2 size-5" /> Masuk ke Dashboard Admin
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-xl border-secondary/40 text-secondary hover:bg-secondary/10"
-                onClick={() => setAiOpen(true)}
-              >
-                <Sparkles className="mr-2 size-5" /> Buka AI Assistant
-              </Button>
-            </div>
-          </div>
-        </section>
+  const handleAskAi = (customText?: string) => {
+    if (!user) {
+      toast.error("Sign In Required", {
+        description: "Please sign in to ask AI Assistant.",
+      });
+      void navigate({ to: "/login" });
+      return;
+    }
+    if (customText) {
+      setPrompt(customText);
+    }
+    setAiOpen(true);
+  };
 
-        {/* 3 Authorized Areas Card Overview */}
-        <section className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">3 Area Utama Administrator</h2>
-            <p className="text-sm text-muted-foreground">
-              Akses cepat ke navigasi resmi yang diizinkan untuk akun Administrator
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Area 1: Beranda */}
-            <div className="surface-card p-6 rounded-2xl border border-border space-y-4">
-              <div className="grid size-12 place-items-center rounded-xl bg-secondary/10 text-secondary">
-                <Laptop className="size-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg text-foreground">1. Beranda</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Pusat ikhtisar sistem dan navigasi utama kontrol admin.
-                </p>
-              </div>
-              <Button asChild variant="outline" size="sm" className="w-full rounded-xl">
-                <Link to="/">Tetap di Beranda</Link>
-              </Button>
-            </div>
-
-            {/* Area 2: AI Assistant */}
-            <div className="surface-card p-6 rounded-2xl border border-secondary/30 bg-secondary/5 space-y-4">
-              <div className="grid size-12 place-items-center rounded-xl gradient-ai text-secondary-foreground">
-                <Sparkles className="size-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg text-foreground">2. AI Assistant</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  True AI Shopping Agent dengan 7 tool calling, grounding 70 laptop, dan memory resolusi kontekstual.
-                </p>
-              </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="w-full rounded-xl"
-                onClick={() => setAiOpen(true)}
-              >
-                <Sparkles className="mr-1.5 size-4" /> Buka AI Assistant
-              </Button>
-            </div>
-
-            {/* Area 3: Dashboard Admin */}
-            <div className="surface-card p-6 rounded-2xl border border-border space-y-4">
-              <div className="grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground">
-                <LayoutDashboard className="size-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg text-foreground">3. Dashboard Admin</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Manajemen katalog 70 laptop, realtime status pesanan customer, dan verifikasi bukti pembayaran.
-                </p>
-              </div>
-              <Button asChild className="w-full rounded-xl">
-                <Link to="/admin">
-                  <LayoutDashboard className="mr-1.5 size-4" /> Buka Dashboard
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
-  // ==========================================
-  // 2. REGULAR USER / GUEST HOMEPAGE
-  // ==========================================
   return (
-    <div>
-      {/* Hero */}
-      <section className="gradient-hero">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 lg:grid-cols-2 lg:py-24">
-          <div className="space-y-6">
-            <Badge className="rounded-full bg-card text-card-foreground">
-              <Sparkles className="mr-1 size-3.5 text-secondary" /> Agentic AI Laptop Shopping Assistant
-            </Badge>
-            <h1 className="text-4xl font-bold leading-tight text-foreground sm:text-5xl">
-              Intelligent Laptop Shopping Experience powered by AI.
-            </h1>
-            <p className="max-w-lg text-base text-foreground/80">
-              LaptopAI Store brings 70 high-performance laptops from ASUS, Lenovo, Acer, HP, Dell, MSI, and Apple together with an intelligent consultant that reasons over your budget, specs, and workflow.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg" variant="secondary" className="rounded-xl">
-                <Link to="/shop">
-                  Browse 70 Laptops <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-xl bg-card"
-                onClick={() => setAiOpen(true)}
-              >
-                <Sparkles className="size-4" /> Ask AI Consultant
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-5 pt-2 text-xs font-medium text-foreground/75">
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="size-4 text-secondary" /> 100% Official Brand Warranty
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Truck className="size-4 text-secondary" /> Free Express Delivery
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Zap className="size-4 text-secondary" /> QRIS · Transfer · COD
-              </span>
-            </div>
-          </div>
-
-          {/* AI prompt card */}
-          <div className="surface-card ai-glow space-y-4 p-6">
-            <div className="flex items-center gap-2">
-              <span className="grid size-9 place-items-center rounded-xl gradient-ai text-secondary-foreground">
-                <Sparkles className="size-4" />
-              </span>
-              <div>
-                <p className="font-semibold">AI Laptop Matchmaker</p>
-                <p className="text-xs text-muted-foreground">Grounded in 70 verified laptops & live stock</p>
+    <AdminCustomerGuard routeName="Beranda Toko">
+      <div>
+        {/* Hero */}
+        <section className="gradient-hero">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 lg:grid-cols-2 lg:py-24">
+            <div className="space-y-6">
+              <Badge className="rounded-full bg-card text-card-foreground">
+                <Sparkles className="mr-1 size-3.5 text-secondary" /> Agentic AI Laptop Shopping Assistant
+              </Badge>
+              <h1 className="text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+                Intelligent Laptop Shopping Experience powered by AI.
+              </h1>
+              <p className="max-w-lg text-base text-foreground/80">
+                LaptopAI Store brings 70 high-performance laptops from ASUS, Lenovo, Acer, HP, Dell, MSI, and Apple together with an intelligent consultant that reasons over your budget, specs, and workflow.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Button asChild size="lg" variant="secondary" className="rounded-xl">
+                  <Link to="/shop">
+                    Browse 70 Laptops <ArrowRight className="size-4" />
+                  </Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="rounded-xl bg-card"
+                  onClick={() => handleAskAi()}
+                >
+                  <Sparkles className="size-4" /> Ask AI Consultant
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-5 pt-2 text-xs font-medium text-foreground/75">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="size-4 text-secondary" /> 100% Official Brand Warranty
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Truck className="size-4 text-secondary" /> Free Express Delivery
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Zap className="size-4 text-secondary" /> QRIS · Transfer · COD
+                </span>
               </div>
             </div>
-            <form
-              className="space-y-3"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setAiOpen(true);
-              }}
-            >
-              <Input
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Contoh: 'Laptop coding RAM 16GB budget 10 juta'..."
-                className="h-12 rounded-xl bg-surface"
-              />
-              <Button type="submit" className="h-11 w-full rounded-xl">
-                <Sparkles className="size-4" /> Find Matching Laptops with AI
-              </Button>
-            </form>
-            <div className="flex flex-wrap gap-1.5">
-              {[
-                "Coding RAM 16GB budget 10 jt",
-                "Gaming RTX budget 15 juta",
-                "Desain grafis RTX 4060",
-                "Laptop kuliah under 8 juta",
-              ].map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setAiOpen(true)}
-                  className="rounded-full border border-border bg-surface px-3 py-1 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                  {s}
-                </button>
-              ))}
+
+            {/* AI prompt card */}
+            <div className="surface-card ai-glow space-y-4 p-6">
+              <div className="flex items-center gap-2">
+                <span className="grid size-9 place-items-center rounded-xl gradient-ai text-secondary-foreground">
+                  <Sparkles className="size-4" />
+                </span>
+                <div>
+                  <p className="font-semibold">AI Laptop Matchmaker</p>
+                  <p className="text-xs text-muted-foreground">Grounded in 70 verified laptops & live stock</p>
+                </div>
+              </div>
+              <form
+                className="space-y-3"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAskAi(prompt);
+                }}
+              >
+                <Input
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="Contoh: 'Laptop coding RAM 16GB budget 10 juta'..."
+                  className="h-12 rounded-xl bg-surface"
+                />
+                <Button type="submit" className="h-11 w-full rounded-xl">
+                  <Sparkles className="size-4" /> Find Matching Laptops with AI
+                </Button>
+              </form>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  "Coding RAM 16GB budget 10 jt",
+                  "Gaming RTX budget 15 juta",
+                  "Desain grafis RTX 4060",
+                  "Laptop kuliah under 8 juta",
+                ].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => handleAskAi(s)}
+                    className="rounded-full border border-border bg-surface px-3 py-1 text-[11px] text-muted-foreground hover:bg-muted hover:text-foreground"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* Featured Collections */}
       <section className="mx-auto max-w-7xl px-4 py-12">
@@ -336,7 +245,7 @@ function Home() {
           <p className="text-sm opacity-90">
             Tell the AI your budget and target software (VS Code, Blender, Premiere, Cyberpunk) for tailored advice.
           </p>
-          <Button variant="outline" className="rounded-xl bg-card" onClick={() => setAiOpen(true)}>
+          <Button variant="outline" className="rounded-xl bg-card" onClick={() => handleAskAi()}>
             Chat with AI
           </Button>
         </div>
@@ -355,5 +264,6 @@ function Home() {
         </div>
       </section>
     </div>
+    </AdminCustomerGuard>
   );
 }

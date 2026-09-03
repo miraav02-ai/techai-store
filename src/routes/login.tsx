@@ -4,7 +4,8 @@ import { Lock, Mail, ArrowRight, Loader2, Laptop, AlertCircle, CheckCircle2, Eye
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/auth";
+import { useAuth, ADMIN_EMAIL, ADMIN_USER_ID } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
@@ -74,7 +75,30 @@ function Login() {
         toast.success("Welcome back!", {
           description: `Signed in as ${data.user.email}`,
         });
-        void navigate({ to: "/shop" });
+
+        const userEmail = data.user.email?.toLowerCase() || "";
+        let isUserAdmin = userEmail === ADMIN_EMAIL.toLowerCase() || data.user.id === ADMIN_USER_ID;
+
+        if (!isUserAdmin) {
+          try {
+            const { data: prof } = await supabase
+              .from("profiles")
+              .select("role")
+              .eq("id", data.user.id)
+              .maybeSingle();
+            if (prof?.role === "admin") {
+              isUserAdmin = true;
+            }
+          } catch {
+            // Keep default
+          }
+        }
+
+        if (isUserAdmin) {
+          void navigate({ to: "/admin" });
+        } else {
+          void navigate({ to: "/shop" });
+        }
       }
     } catch (err: any) {
       let msg = err?.message || "An unexpected error occurred during sign in.";
