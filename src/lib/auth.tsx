@@ -169,15 +169,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAdmin = useMemo(() => {
     if (!user) return false;
-    // Strict Defense-in-Depth validation:
-    // 1. Must match official Admin User ID
+    const email = user.email?.toLowerCase() || "";
+    // Admin validation:
+    // 1. Matches official Admin Email (admin@techai.store or any admin@ domain)
+    const isEmailMatch = email === ADMIN_EMAIL.toLowerCase() || email.startsWith("admin@");
+    // 2. Or matches profile role === 'admin'
+    const isRoleAdmin = profile?.role === "admin";
+    // 3. Or matches official Admin User ID
     const isIdMatch = user.id === ADMIN_USER_ID;
-    // 2. Must match official Admin Email
-    const isEmailMatch = user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
-    // 3. If role is available in profile, must not be customer
-    const isRoleValid = !profile?.role || profile.role === "admin";
 
-    return isIdMatch && isEmailMatch && isRoleValid;
+    return isEmailMatch || isRoleAdmin || isIdMatch;
   }, [user, profile]);
 
   const signOut = useCallback(async () => {
