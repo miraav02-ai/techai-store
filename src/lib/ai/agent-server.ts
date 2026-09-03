@@ -507,12 +507,16 @@ export const agentChatFn = createServerFn({ method: "POST" })
       data.context.activeProductId = resolved.productId;
     }
 
-    const geminiKey = process.env["GEMINI_API_KEY"] || "";
+    const geminiKey = (
+      process.env["GEMINI_API_KEY"] ||
+      process.env["VITE_GEMINI_API_KEY"] ||
+      ""
+    ).trim().replace(/^["']|["']$/g, "");
 
-    if (geminiKey.trim()) {
+    if (geminiKey) {
       try {
         console.log(`[AI Agent Server] Invoking Gemini Agent for request: "${data.message.slice(0, 50)}..."`);
-        const geminiRes = await runGeminiAgent(data, geminiKey.trim());
+        const geminiRes = await runGeminiAgent(data, geminiKey);
         return geminiRes;
       } catch (err: any) {
         console.warn("[AI Agent Server] Gemini call failed, falling back to local engine:", err.message);
